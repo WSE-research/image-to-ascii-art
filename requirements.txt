@@ -1,6 +1,6 @@
 ansi2html==1.8.0
 ascii_magic==2.3.0
 imgkit==1.2.3
-Pillow==10.0.0
+Pillow==9.4.0
 python-decouple==3.8
 streamlit==1.25.0

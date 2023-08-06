@@ -6,3 +6,8 @@ section[data-testid='stFileUploadDropzone'] {
 section[data-testid='stFileUploadDropzone']:hover {
     border-color: #4186f7;
 }
+
+div.uploadedFile {
+    border: #0F0 0.33ex dotted;
+    background-color: #EFE;
+}
