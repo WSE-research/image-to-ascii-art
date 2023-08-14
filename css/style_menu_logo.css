@@ -11,3 +11,7 @@
 #WSElogo:hover {
     transform: rotate(720deg) scale(1.333);
 }
+
+.app_logo {
+    width: 66%;
+}
