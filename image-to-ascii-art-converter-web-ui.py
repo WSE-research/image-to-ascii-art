@@ -90,7 +90,11 @@ approaches = {
     }
 }
 
+def update_width_slider():
+    st.session_state.width_slider = st.session_state.width_input
 
+def update_width_input():
+    st.session_state.width_input = st.session_state.width_slider
 
 st.set_page_config(layout="wide", initial_sidebar_state="expanded",
                    page_title="Web UI for ascii-image-converter",
@@ -116,15 +120,16 @@ with st.sidebar:
         )
 
     label = "Select the source of the image"
-    help = "Upload: Upload an image from your local computer. Download: Download an image from the internet."
+    help = "Upload: Upload an image from your local computer.\n\nDownload: Download an image from the internet."
     source = st.sidebar.radio(label, [SOURCE_UPLOAD, SOURCE_DOWNLOAD], index=0, key="source", help=help, horizontal=True)
 
     label = "Define the number of ASCII characters per line in the generated output"
     help="The higher the number, the more detailed the output will be. However, it will also take longer to generate the output."
-    st.sidebar.markdown("**ASCII line lenght**: " + label)
-    width = st.slider(label, MIN_WIDTH, MAX_WIDTH, value=width, step=1, label_visibility="collapsed", help=help)
+    st.sidebar.markdown("----\n\n**ASCII line lenght**: " + label)
+    width = st.slider(label, MIN_WIDTH, MAX_WIDTH, value=width, step=1, label_visibility="collapsed", help=help, key="width_slider", on_change=update_width_input)
+    width = st.number_input(label, min_value=MIN_WIDTH, max_value=MAX_WIDTH, value=width, step=10, key="width_input", help=help, label_visibility="collapsed", on_change=update_width_slider)
 
-    st.sidebar.markdown("**Available approaches:** Activate the approaches you want to use.")
+    st.sidebar.markdown("----\n\n**Available approaches:** Activate the approaches you want to use.")
     for approach in approaches.keys():
         approaches[approach]["active"] = st.checkbox(approach, value=True, help=approaches[approach]["description"])
 
@@ -143,8 +148,10 @@ with st.sidebar:
     render_scale_pixels = st.sidebar.number_input(label, label_visibility="visible", min_value=1, max_value=16, value=render_scale_pixels, help=help)  
 
     help = """The background color is just used here, not in the generated ASCII art image. 
-    Hence, it is intended to simulate the background color of the console/website where the ASCII art image will be used.
-    If you want to change the actual background of your ASCII art image, then you should change the background color in uploaded/provided image. 
+    
+Hence, it is intended to simulate the background color of the console/website where the ASCII art image will be used.
+    
+If you want to change the actual background of your ASCII art image, then you should change the background color in uploaded/provided image. 
     """
     transparent_background = st.checkbox('transparent preview background', value=True, help=help)
     if transparent_background:
@@ -191,7 +198,8 @@ base_filename = None
 
 if source == SOURCE_UPLOAD:
     label = "Upload an image file"
-    st.markdown("#### " + label)
+    help = "If you want to use an image from the internet, then select the 'Download' option in the sidebar."
+    st.markdown("#### " + label, help=help)
     uploaded_image_file = st.file_uploader(
         label, accept_multiple_files=False, label_visibility="collapsed", type=ALLOWED_UPLOAD_TYPES)
     uploaded_image_file_name = uploaded_image_file.name if uploaded_image_file else None
@@ -204,7 +212,8 @@ if source == SOURCE_UPLOAD:
 
 if source == SOURCE_DOWNLOAD:
     label = "Download an image from the Web"
-    st.markdown("#### " + label)
+    help = "If you want to use an image from your computer, then select the 'Upload' option in the sidebar."
+    st.markdown("#### " + label, help=help)
     download_url = st.text_input("Enter the URL of an image file (allowed file types: %s), e.g., https://avatars.githubusercontent.com/u/120292474" % (", ".join(ALLOWED_UPLOAD_TYPES),), key="url")
     if download_url is not None and download_url.strip() != "":
         base_filename = current_directory + "/downloaded_image"
@@ -400,7 +409,7 @@ def render_svg(svg_filename, width, render_scale_pixels):
     """Renders the given SVG string."""
     svg = open(svg_filename, 'r').read()
     b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
-    html = r'<img title="SVG image" class="svg_ascii_art" src="data:image/svg+xml;base64,%s" width="%spx" /><br><div data-testid="caption">%s</div>' % (b64, width * render_scale_pixels, "SVG image")
+    html = r'<img title="SVG image" class="svg_ascii_art" src="data:image/svg+xml;base64,%s" width="%spx" /><br><div data-testid="caption">%s with %s characters per line</div>' % (b64, width * render_scale_pixels, "SVG image", width)
     st.write(html, unsafe_allow_html=True)
 
 

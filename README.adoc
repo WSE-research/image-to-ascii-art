@@ -1,2 +1,87 @@
+:toc:
+:toclevels: 5
+:toc-placement!:
+:source-highlighter: highlight.js
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:github-repository: https://github.com/WSE-research/image-to-ascii-art
+endif::[]
+
+++++
+<img align="right" role="right" height="96" src="https://github.com/WSE-research/image-to-ascii-art/blob/main/images/image-to-ascii-art-logo.png?raw=true"/>
+++++
+
 = Image To ASCII Converter
 
+---
+
+toc::[]
+
+---
+
+== Building and Running the Application
+
+=== Running local with Python
+
+==== Install dependencies
+
+===== Install Python dependencies
+
+[source, bash]
+----
+pip install -r requirements.txt
+----
+
+===== Install other dependencies
+
+* https://github.com/TheZoraiz/ascii-image-converter[ascii-image-converter]
+* https://inkscape.org/[inkscape]
+
+==== Run the Application
+
+[source, bash]
+----
+streamlit run image-to-ascii-art-converter-web-ui.py --server.port=8501 
+----
+
+or 
+
+[source, bash]
+----
+python -m streamlit run image-to-ascii-art-converter-web-ui.py --server.port=8501
+----
+
+Thereafter, you can access the application at http://localhost:8501.
+
+=== Docker
+
+==== Build Docker Image
+
+[source, bash]
+----
+docker build -t image-to-ascii-art:latest . 
+----
+
+==== Run Docker Image
+
+[source, bash]
+----
+docker run --rm -p 8501:8501 --name image-to-ascii-art image-to-ascii-art:latest
+----
+
+Thereafter, you can access the application at http://localhost:8501.
+
+== Contribute
+
+We are happy to receive your contributions. 
+Please create a pull request or an {github-repository}/issues/new[issue].
+As this tool is published under the {github-repository}/blob/main/LICENSE[MIT license], feel free to {github-repository}/fork[fork] it and use it in your own projects.
+
+== Disclaimer
+
+This tool is not storing any data. All data is processed in memory and is not persisted.
+This tool is provided "as is" and without any warranty, express or implied.
