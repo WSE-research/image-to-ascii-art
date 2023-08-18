@@ -59,6 +59,8 @@ Thereafter, you can access the application at http://localhost:8501.
 
 === Docker
 
+The application is available at https://hub.docker.com/r/wseresearch/image-to-ascii-art[Dockerhub] for free use in your environment.
+
 ==== Build Docker Image
 
 [source, bash]

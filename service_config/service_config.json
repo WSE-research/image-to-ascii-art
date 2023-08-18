@@ -1,0 +1,10 @@
+{
+    "services": [
+        {
+            "mode": "dockerfile",
+            "port": "40144:8501",
+            "image": "wseresearch/image-to-ascii-art",
+            "tag": "latest"
+        }
+    ]
+}
