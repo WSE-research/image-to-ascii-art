@@ -23,6 +23,17 @@ toc::[]
 
 ---
 
+== Online Demo 
+
+The demo is available at https://demos.swe.htwk-leipzig.de/image-to-ascii-art/. 
+Please not that the file upload limit is set here to 1 MB (definitily suitable for good quality). 
+If you want to increase the upload larger, then deploy the application for yourself and set the parameter to a different value: 
+
+[source, bash]
+----
+server.maxUploadSize=5 # sets the limit to 5 MB
+----
+
 == Building and Running the Application
 
 === Running local with Python
