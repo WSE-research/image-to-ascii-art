@@ -15,6 +15,7 @@ from ansi2html import Ansi2HTMLConverter
 from ascii_magic import AsciiArt
 from ansitoimg.render import ansiToSVG
 from util import include_css, download_image, save_uploaded_file
+import json
 
 UPLOAD_DIRECTORY = config('UPLOAD_DIRECTORY')
 EXPORT_IMAGE_ENDING = "-ascii-art.png"
@@ -493,6 +494,13 @@ def show_download_buttons(ascii_data, svg_filename, svg_download_activated, png_
             )
 
 
+def save_current_configuration(data, absolute_filename):
+    """
+    Saves the given configuration data to a file.
+    """
+    with open(absolute_filename, "w") as f:
+        f.write(json.dumps(data, indent=4))
+
 if base_filename is not None and (uploaded_image_file is not None or (download_url is not None and download_url.strip() != "")): # for safety reasons
     
     st.markdown("""<style>
@@ -524,6 +532,20 @@ if base_filename is not None and (uploaded_image_file is not None or (download_u
     for approach in approaches:
         if approaches[approach]["active"]:
             active_ascii_generators.append(approach)
+
+    save_current_configuration({
+        "base_filename": base_filename,
+        "original_image_dimensions": image_size,
+        "original_image_size": os.path.getsize(input_filename),
+        "active_ascii_generators": active_ascii_generators,
+        "svg_download_activated": svg_download_activated,
+        "png_download_activated": png_download_activated,
+        "characters": width,
+        "output_width": output_width,
+        "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "timestamp": datetime.now().timestamp()
+    }, base_filename + "_" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".json")
+    
             
     # dynamically generate the tabs for the selected approaches
     tabs = st.tabs(active_ascii_generators)

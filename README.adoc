@@ -12,10 +12,20 @@ ifdef::env-github[]
 endif::[]
 
 ++++
-<img align="right" role="right" height="96" src="https://github.com/WSE-research/image-to-ascii-art/blob/main/images/image-to-ascii-art-logo.png?raw=true"/>
+<img align="right" role="right" height="128" src="https://github.com/WSE-research/image-to-ascii-art/blob/main/images/image-to-ascii-art-logo.png?raw=true"/>
 ++++
 
 = Image To ASCII Converter
+
+You want to create ASCII art from your images? 
+Then this tool is for you.
+It is a web application that allows you to upload an image and convert it to ASCII art.
+Here, we did not implement yet another image-to-ASCII conversion algorithm. 
+Instead, we use existing implementations and provide a web interface for them, s.t., the configuration and conversion can be done in the browser.
+The application is based on https://github.com/TheZoraiz/ascii-image-converter[ascii-image-converter] (available as console application) and https://github.com/LeandroBarone/python-ascii_magic[ASCII magic] (Python library), so thanks for image generation go to the authors of these projects.
+However, our tool provides additional features like SVG, PNG, and ASCII export as well as a preview mode and many more.
+Here, we focus on providing an easy-to-use web interface that makes it easy to convert images to ASCII art and to compare different results.
+This tool was implemented using the https://streamlit.io/[Streamlit] library.
 
 ---
 
@@ -23,20 +33,41 @@ toc::[]
 
 ---
 
+++++
+<div style="text-align: center">
+<img align="center" style="max-width:1442px" title="Screenshot of the Image to ASCII Art Converter" src="https://github.com/WSE-research/image-to-ascii-art/blob/main/images/image-to-ascii-art-screenshot.png?raw=true"/><br>
+<sub><sup>Screenshot of the Image-to-ASCII-Art UI (using a <a href="https://pixabay.com/photos/cat-tabby-feline-face-cat-face-1046544/">Pixabay image</a>)</sup></sub>
+
+</div>
+++++
+
+
+== Features
+
+* Upload an image *or* directly use an image from the web
+* Convert the image to ASCII art using 9 different algorithms/configurations (all of them are shown )
+** 3 with colorized characters (2 from ascii-image-converter, 1 from ASCII magic)
+** 3 with colorized character backgrounds (all from ascii-image-converter)
+*** with a limited set of characters and a background color based on the average color of the pixels
+*** with an extended set of characters and a background color based on the average color of the pixels
+*** without characters and only background colors per position based on the average color of the pixels
+** 3 without using colors at all, i.e., only using characters (2 from ascii-image-converter, 1 from ASCII magic)
+* 24-bit colors are used to provide best quality
+* Preview the different versions of the generated ASCII art 
+* Define the preview background color (to simulate the background color of the target medium)
+* Download the generated ASCII art as scalable image for lossless scaling (SVG), PNG, or plain ASCII text (e.g., to use it for a https://www.baeldung.com/spring-boot-custom-banners[banner.txt] of a Spring application)
+** note, even the text-based ASCII format will include the colors definitions using https://en.wikipedia.org/wiki/ANSI_escape_code#Colors[ANSI escape codes] (supported by most shells)
+* Interactive configuration of the conversion process
+
+
 == Online Demo 
 
 The demo is available at https://demos.swe.htwk-leipzig.de/image-to-ascii-art/. 
-Please not that the file upload limit is set here to 1 MB (definitily suitable for good quality). 
-If you want to increase the upload larger, then deploy the application for yourself and set the parameter to a different value: 
-
-[source, bash]
-----
-server.maxUploadSize=5 # sets the limit to 5 MB
-----
+Please note that the file upload limit is set here to 1 MB (definitely suitable for good quality). 
 
 == Building and Running the Application
 
-=== Running local with Python
+=== Running locally without Python
 
 ==== Install dependencies
 
@@ -49,10 +80,22 @@ pip install -r requirements.txt
 
 ===== Install other dependencies
 
+Note: just tested on Linux systems.
+
 * https://github.com/TheZoraiz/ascii-image-converter[ascii-image-converter]
-* https://inkscape.org/[inkscape]
+* https://inkscape.org/[Inkscape]
 
 ==== Run the Application
+
+First, you neet to define the location of the directory where the application should store the temporary files (e.g.., the image files). 
+Example:
+
+[source, bash]
+----
+export UPLOAD_DIRECTORY=/tmp/image-to-ascii-art
+----
+
+Thereafter, you can run the application using the following command:
 
 [source, bash]
 ----
@@ -79,6 +122,15 @@ The application is available at https://hub.docker.com/r/wseresearch/image-to-as
 docker build -t image-to-ascii-art:latest . 
 ----
 
+If you want to increase the upload larger, then change the `server.maxUploadSize` in the {github-repository}/blob/main/[Dockerfile]: 
+
+[source, bash]
+----
+# set the limit to 5 MB
+server.maxUploadSize=5 
+----
+
+
 ==== Run Docker Image
 
 [source, bash]
@@ -96,5 +148,5 @@ As this tool is published under the {github-repository}/blob/main/LICENSE[MIT li
 
 == Disclaimer
 
-This tool is not storing any data. All data is processed in memory and is not persisted.
+This tool just temporary storing the image data. 
 This tool is provided "as is" and without any warranty, express or implied.
