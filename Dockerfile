@@ -22,3 +22,4 @@ EXPOSE 8501
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 SHELL ["/bin/bash", "-c"]
 ENTRYPOINT ["streamlit", "run", "image-to-ascii-art-converter-web-ui.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.maxUploadSize=1"]
+

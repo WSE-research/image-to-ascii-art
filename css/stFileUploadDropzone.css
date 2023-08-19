@@ -11,3 +11,11 @@ div.uploadedFile {
     border: #0F0 0.33ex dotted;
     background-color: #EFE;
 }
+
+div[data-testid='stHorizontalBlock'] img {
+    max-height: 25ex;
+    max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+

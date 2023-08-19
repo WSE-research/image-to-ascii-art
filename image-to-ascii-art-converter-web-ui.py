@@ -107,7 +107,6 @@ SOURCE_UPLOAD = "Upload"
 SOURCE_DOWNLOAD = "Download"
 
 with st.sidebar:
-        
     with open(PAGE_IMAGE, "rb") as f:
         image_data = base64.b64encode(f.read()).decode("utf-8")
         st.sidebar.markdown(
@@ -134,6 +133,7 @@ with st.sidebar:
         approaches[approach]["active"] = st.checkbox(approach, value=True, help=approaches[approach]["description"])
 
     st.sidebar.markdown("----\n**Download:** It is recommended to disable the PNG option if you want to generate a lot of ASCII art images and re-activate when ready to download.")
+    
     svg_download_activated = st.sidebar.checkbox("Enable download as SVG", value=True, help="SVG is a vector format and can be scaled without loss of quality.")
     png_download_activated = st.sidebar.checkbox("Enable download as PNG", value=False, help="PNG is a raster format and can not be scaled without loss of quality.")
 
@@ -195,38 +195,48 @@ if not os.path.exists(current_directory):
 download_url = None
 uploaded_image_file = None
 base_filename = None
+image_size = None
 
-if source == SOURCE_UPLOAD:
-    label = "Upload an image file"
-    help = "If you want to use an image from the internet, then select the 'Download' option in the sidebar."
-    st.markdown("#### " + label, help=help)
-    uploaded_image_file = st.file_uploader(
-        label, accept_multiple_files=False, label_visibility="collapsed", type=ALLOWED_UPLOAD_TYPES)
-    uploaded_image_file_name = uploaded_image_file.name if uploaded_image_file else None
+selection_source, preview_original_image = st.columns([3, 1])
 
-    # put everything into one new and unique directory
-    if uploaded_image_file_name is not None:
-        base_filename = current_directory + "/" + os.path.splitext(uploaded_image_file_name)[0]
-        input_filename = base_filename + ".png"
-        image_size = save_uploaded_file(input_filename, uploaded_image_file)
+with selection_source:
+    if source == SOURCE_UPLOAD:
+        label = "Upload an image file"
+        help = "If you want to use an image from the internet, then select the 'Download' option in the sidebar."
+        st.markdown("#### " + label, help=help)
+        uploaded_image_file = st.file_uploader(
+            label, accept_multiple_files=False, label_visibility="collapsed", type=ALLOWED_UPLOAD_TYPES)
+        uploaded_image_file_name = uploaded_image_file.name if uploaded_image_file else None
 
-if source == SOURCE_DOWNLOAD:
-    label = "Download an image from the Web"
-    help = "If you want to use an image from your computer, then select the 'Upload' option in the sidebar."
-    st.markdown("#### " + label, help=help)
-    download_url = st.text_input("Enter the URL of an image file (allowed file types: %s), e.g., https://avatars.githubusercontent.com/u/120292474" % (", ".join(ALLOWED_UPLOAD_TYPES),), key="url")
-    if download_url is not None and download_url.strip() != "":
-        base_filename = current_directory + "/downloaded_image"
-        input_filename = base_filename + base64.b64encode(download_url.encode("utf-8")).decode("utf-8") + ".png"
-        try:
-            image_size = download_image(download_filename=input_filename, url=download_url)
-            st.info("Downloaded image from %s (size %sx%s)." % (download_url, image_size["width"], image_size["height"]))
-        except Exception as e:
-            st.error(f"Error while downloading the image from {download_url}: " + str(e))
-            download_url = None
-            base_filename = None
-            input_filename = None
-            image_size = None
+        # put everything into one new and unique directory
+        if uploaded_image_file_name is not None:
+            base_filename = current_directory + "/" + os.path.splitext(uploaded_image_file_name)[0]
+            input_filename = base_filename + ".png"
+            image_size = save_uploaded_file(input_filename, uploaded_image_file)
+
+    if source == SOURCE_DOWNLOAD:
+        label = "Download an image from the Web"
+        help = "If you want to use an image from your computer, then select the 'Upload' option in the sidebar."
+        st.markdown("#### " + label, help=help)
+        download_url = st.text_input("Enter the URL of an image file (allowed file types: %s), e.g., https://avatars.githubusercontent.com/u/120292474" % (", ".join(ALLOWED_UPLOAD_TYPES),), key="url")
+        if download_url is not None and download_url.strip() != "":
+            base_filename = current_directory + "/downloaded_image"
+            input_filename = base_filename + base64.b64encode(download_url.encode("utf-8")).decode("utf-8") + ".png"
+            try:
+                image_size = download_image(download_filename=input_filename, url=download_url)
+                st.info("Downloaded image from %s (size %sx%s)." % (download_url, image_size["width"], image_size["height"]))
+            except Exception as e:
+                st.error(f"Error while downloading the image from {download_url}: " + str(e))
+                download_url = None
+                base_filename = None
+                input_filename = None
+                image_size = None
+                
+with preview_original_image:
+    if image_size is not None:
+        label = "Original image (%sx%s)" % (image_size["width"], image_size["height"])
+        help = "This is just a preview of the original image."
+        st.image(input_filename, label, use_column_width=True)
 
 # @st.cache_resource
 def convert_image_to_ascii_art_execute(image_filename, parameters):
