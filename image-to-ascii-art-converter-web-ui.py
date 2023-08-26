@@ -14,20 +14,28 @@ from decouple import config
 from ansi2html import Ansi2HTMLConverter
 from ascii_magic import AsciiArt
 from ansitoimg.render import ansiToSVG
-from util import include_css, download_image, save_uploaded_file
+from util import include_css, download_image, save_uploaded_file, replace_values_in_index_html
 import json
 
 UPLOAD_DIRECTORY = config('UPLOAD_DIRECTORY')
 EXPORT_IMAGE_ENDING = "-ascii-art.png"
-MIN_WIDTH = 10
-MAX_WIDTH = 300
-RENDER_SCALE_PIXELS = 8
-DEFAULT_OUTPUT_WIDTH = 1024
 PAGE_ICON = config('PAGE_ICON')
 PAGE_IMAGE = config('PAGE_IMAGE')
 GITHUB_REPO = config('GITHUB_REPO')
 DESCRIPTION = config('DESCRIPTION').replace("\\n", "\n") % (GITHUB_REPO, GITHUB_REPO + "/issues/new", GITHUB_REPO + "/issues/new")
 ALLOWED_UPLOAD_TYPES = ["jpg", "jpeg", "png", "bmp", "webp", "gif", "tiff"]
+META_DESCRIPTION = config('META_DESCRIPTION', default=None)
+
+REPLACE_INDEX_HTML_CONTENT = config('REPLACE_INDEX_HTML_CONTENT', default=False, cast=bool)
+CANONICAL_URL = config('CANONICAL_URL', default=None)
+
+SOURCE_UPLOAD = "Upload"
+SOURCE_DOWNLOAD = "Download"
+PAGE_TITLE = "ASCII to image converter"
+MIN_WIDTH = 10
+MAX_WIDTH = 300
+RENDER_SCALE_PIXELS = 8
+DEFAULT_OUTPUT_WIDTH = 1024
 
 width = 60
 agree_on_showing_additional_information = True
@@ -91,21 +99,25 @@ approaches = {
     }
 }
 
-def update_width_slider():
-    st.session_state.width_slider = st.session_state.width_input
-
-def update_width_input():
-    st.session_state.width_input = st.session_state.width_slider
+replace_values_in_index_html(st, REPLACE_INDEX_HTML_CONTENT, 
+                             new_title=PAGE_TITLE, 
+                             new_meta_description=META_DESCRIPTION, 
+                             new_noscript_content=DESCRIPTION, 
+                             canonical_url=CANONICAL_URL, 
+                             page_icon_with_path=PAGE_ICON)
 
 st.set_page_config(layout="wide", initial_sidebar_state="expanded",
-                   page_title="Web UI for ascii-image-converter",
+                   page_title=PAGE_TITLE,
                    page_icon=Image.open(PAGE_ICON)
                    )
 include_css(st, ["css/stFileUploadDropzone.css", "css/style_github_ribbon.css",
             "css/style_menu_logo.css", "css/style_logo.css", "css/style_ascii_images.css", "css/style_tabs.css"])  
 
-SOURCE_UPLOAD = "Upload"
-SOURCE_DOWNLOAD = "Download"
+def update_width_slider():
+    st.session_state.width_slider = st.session_state.width_input
+
+def update_width_input():
+    st.session_state.width_input = st.session_state.width_slider
 
 with st.sidebar:
     with open(PAGE_IMAGE, "rb") as f:

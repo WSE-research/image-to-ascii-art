@@ -1,5 +1,12 @@
 FROM ubuntu:22.04
 
+# parameters that might be provided at runtime by using the --env option
+ENV REPLACE_INDEX_HTML_CONTENT="false"
+ENV SERVER_PORT=8501
+ENV SERVER_MAXUPLOADSIZE=4
+ENV CANONICAL_URL=""
+
+# install dependencies
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -yq bash curl wget ca-certificates python3 python3-pip 
 
@@ -9,17 +16,35 @@ RUN apt-get update && apt-get install -yq inkscape ascii-image-converter
 
 # an acceptable version of inkscape would be >= 1.1
 RUN /usr/bin/inkscape -V
+
+# copy the application files
 COPY . /app
 WORKDIR /app
+
+# install python dependencies
 RUN python3 -m pip install --upgrade pip 
 RUN python3 -m pip install -r requirements.txt
 
-ENV UPLOAD_DIRECTORY=/app/working_directory
+# set environment variables for the required colorization of the terminal
 ENV force_color_prompt=yes
 ENV COLORTERM=24bit
 
-EXPOSE 8501
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
-SHELL ["/bin/bash", "-c"]
-ENTRYPOINT ["streamlit", "run", "image-to-ascii-art-converter-web-ui.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.maxUploadSize=1"]
+# set environment variables for the application
+ENV UPLOAD_DIRECTORY=/app/working_directory
+
+EXPOSE $SERVER_PORT
+HEALTHCHECK CMD curl --fail http://localhost:$SERVER_PORT/_stcore/health
+
+# set all environment variables
+ENTRYPOINT ["sh", "-c", "\
+    export REPLACE_INDEX_HTML_CONTENT=$REPLACE_INDEX_HTML_CONTENT \
+    export SERVER_PORT=$SERVER_PORT \
+    export SERVER_MAXUPLOADSIZE=$SERVER_MAXUPLOADSIZE \
+    export CANONICAL_URL=$CANONICAL_URL \
+    && echo \"REPLACE_INDEX_HTML_CONTENT: $REPLACE_INDEX_HTML_CONTENT\" \
+    && echo \"SERVER_PORT: $SERVER_PORT\" \
+    && echo \"SERVER_MAXUPLOADSIZE: $SERVER_MAXUPLOADSIZE\" \
+    && echo \"CANONICAL_URL: $CANONICAL_URL\" \
+    && streamlit run image-to-ascii-art-converter-web-ui.py --server.port=$SERVER_PORT --server.address=0.0.0.0 --server.maxUploadSize=$SERVER_MAXUPLOADSIZE \
+"]
 
