@@ -4,6 +4,8 @@ import logging
 import os
 import re
 import base64
+from io import BytesIO
+import markdown
 
 def include_css(st, filenames):
     content = ""
@@ -37,6 +39,42 @@ def copy_file(src, dest):
             f.write(data)
             f.close()
 
+# Convert Image to Base64 
+def im_2_b64(image):
+    buff = BytesIO()
+    image.save(buff, format="PNG")
+    img_str = base64.b64encode(buff.getvalue())
+    return img_str
+
+def replace_index_html(index_html, index_html_change_indicator_file, new_title, new_meta_description, canonical_url, new_noscript_content, favicon_base64, additional_html_head_content, page_icon_with_path):
+    with open(index_html, 'r') as f:
+        data = f.read()
+        f.close()
+
+        newdata = re.sub('<title>Streamlit</title>',
+                         f"<title>{new_title}</title>{new_meta_description}{canonical_url}", data)
+
+        if new_noscript_content is not None and new_noscript_content != "":
+            newdata = re.sub('<noscript>You need to enable JavaScript to run this app.</noscript>',
+                             f'<noscript>{new_noscript_content}</noscript>', newdata)
+
+        if page_icon_with_path is not None:
+            # Do not forget to add the favicon variable also as parameter to set_page_config
+            newdata = re.sub('./favicon.png', favicon_base64, newdata)
+            
+        if additional_html_head_content is not None and additional_html_head_content != "":
+            newdata = re.sub('</head>', f'{additional_html_head_content}</head>', newdata)
+
+        with open(index_html, 'w') as f:
+            f.write(newdata)
+            f.close()
+
+        with open(index_html_change_indicator_file, 'w') as f:
+            f.write("This file indicates that the index.html file has been changed. If you want to change the values again, please delete this file.")
+            f.close()
+            logging.info("to enable a new adaption of the index.html file, please delete the file: " +
+                         index_html_change_indicator_file)
+
 def replace_values_in_index_html(st, activate, new_title, new_meta_description=None, new_noscript_content=None, canonical_url=None, page_icon_with_path=None, additional_html_head_content=None):
     """
         This method replaces values in the index.html file of the Streamlit package.
@@ -68,9 +106,11 @@ def replace_values_in_index_html(st, activate, new_title, new_meta_description=N
     # only replace favicon if it is not None
     if page_icon_with_path is not None:
         with open(page_icon_with_path, "rb") as image_file:
-            encoded_string = base64.b64encode(image_file.read())
-            favicon_base64 = "data:image/png;base64," + \
-                encoded_string.decode('utf-8')
+            page_icon = Image.open(image_file)
+            # just use a size of 128x128 for the embedded favicon
+            page_icon = page_icon.resize((128, 128), Image.ANTIALIAS)
+            encoded_string = im_2_b64(page_icon)
+            favicon_base64 = "data:image/png;base64," + encoded_string.decode('utf-8')
 
     # only set canonical_url if it is not None
     if canonical_url is not None and canonical_url != "":
@@ -83,31 +123,13 @@ def replace_values_in_index_html(st, activate, new_title, new_meta_description=N
         new_meta_description = f'<meta name="description" content="{new_meta_description}"/>'
     else:
         new_meta_description = ""
+        
+    # render noscript content if it is not None and not empty as Markdown
+    if new_noscript_content is not None and new_noscript_content != "":
+        new_noscript_content = markdown.markdown(new_noscript_content)
+    else:
+        new_noscript_content = ""    
+    new_noscript_content = markdown.markdown("# " + new_title) + "\n" + new_noscript_content
 
-    with open(index_html, 'r') as f:
-        data = f.read()
-        f.close()
-
-        newdata = re.sub('<title>Streamlit</title>',
-                         f"<title>{new_title}</title>{new_meta_description}{canonical_url}", data)
-
-        if new_noscript_content is not None and new_noscript_content != "":
-            newdata = re.sub('<noscript>You need to enable JavaScript to run this app.</noscript>',
-                             f'<noscript>{new_noscript_content}</noscript>', newdata)
-
-        if page_icon_with_path is not None:
-            # Do not forget to add the favicon variable also as parameter to set_page_config
-            newdata = re.sub('./favicon.png', favicon_base64, newdata)
-            
-        if additional_html_head_content is not None and additional_html_head_content != "":
-            newdata = re.sub('</head>', f'{additional_html_head_content}</head>', newdata)
-
-        with open(index_html, 'w') as f:
-            f.write(newdata)
-            f.close()
-
-        with open(index_html_change_indicator_file, 'w') as f:
-            f.write("This file indicates that the index.html file has been changed. If you want to change the values again, please delete this file.")
-            f.close()
-            logging.info("to enable a new adaption of the index.html file, please delete the file: " +
-                         index_html_change_indicator_file)
+    # replace content in index.html
+    replace_index_html(index_html, index_html_change_indicator_file, new_title, new_meta_description, canonical_url, new_noscript_content, favicon_base64, additional_html_head_content, page_icon_with_path)
