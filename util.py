@@ -37,7 +37,7 @@ def copy_file(src, dest):
             f.write(data)
             f.close()
 
-def replace_values_in_index_html(st, activate, new_title, new_meta_description=None, new_noscript_content=None, canonical_url=None, page_icon_with_path=None):
+def replace_values_in_index_html(st, activate, new_title, new_meta_description=None, new_noscript_content=None, canonical_url=None, page_icon_with_path=None, additional_html_head_content=None):
     """
         This method replaces values in the index.html file of the Streamlit package.
         The intention is to change the title of the page, the favicon and the meta description.
@@ -98,6 +98,9 @@ def replace_values_in_index_html(st, activate, new_title, new_meta_description=N
         if page_icon_with_path is not None:
             # Do not forget to add the favicon variable also as parameter to set_page_config
             newdata = re.sub('./favicon.png', favicon_base64, newdata)
+            
+        if additional_html_head_content is not None and additional_html_head_content != "":
+            newdata = re.sub('</head>', f'{additional_html_head_content}</head>', newdata)
 
         with open(index_html, 'w') as f:
             f.write(newdata)

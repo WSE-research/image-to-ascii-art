@@ -28,6 +28,7 @@ META_DESCRIPTION = config('META_DESCRIPTION', default=None)
 
 REPLACE_INDEX_HTML_CONTENT = config('REPLACE_INDEX_HTML_CONTENT', default=False, cast=bool)
 CANONICAL_URL = config('CANONICAL_URL', default=None)
+ADDITIONAL_HTML_HEAD_CONTENT = config('ADDITIONAL_HTML_HEAD_CONTENT', default=None)
 
 SOURCE_UPLOAD = "Upload"
 SOURCE_DOWNLOAD = "Download"
@@ -104,7 +105,9 @@ replace_values_in_index_html(st, REPLACE_INDEX_HTML_CONTENT,
                              new_meta_description=META_DESCRIPTION, 
                              new_noscript_content=DESCRIPTION, 
                              canonical_url=CANONICAL_URL, 
-                             page_icon_with_path=PAGE_ICON)
+                             page_icon_with_path=PAGE_ICON,
+                             additional_html_head_content=ADDITIONAL_HTML_HEAD_CONTENT
+                            )
 
 st.set_page_config(layout="wide", initial_sidebar_state="expanded",
                    page_title=PAGE_TITLE,
