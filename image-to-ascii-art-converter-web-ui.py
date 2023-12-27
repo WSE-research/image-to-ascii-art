@@ -651,7 +651,7 @@ if base_filename is not None and (uploaded_image_file is not None or (download_u
 
 st.markdown("""
 ---
-Brought to you by the [<img style="height:3ex;border:0" src="https://avatars.githubusercontent.com/u/120292474?s=96&v=4"> WSE research group](http://wse.technology/) at the [Leipzig University of Applied Sciences](https://www.htwk-leipzig.de/).
+Brought to you by the [<img style="height:3ex;border:0" src="https://avatars.githubusercontent.com/u/120292474?s=96&v=4"> WSE research group](https://wse-research.org/?utm_source=image-to-ascii-art&utm_medium=footer) at the [Leipzig University of Applied Sciences](https://www.htwk-leipzig.de/).
 
 See our [GitHub team page](http://wse.technology/) for more projects and tools.
 """, unsafe_allow_html=True)
