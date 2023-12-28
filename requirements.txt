@@ -1,5 +1,5 @@
 ansi2html==1.9.1
-ansitoimg==2023.1
+ansitoimg==2023.3.1
 ascii_magic==2.3.0
 lxml==4.9.4
 markdown==3.5.1
