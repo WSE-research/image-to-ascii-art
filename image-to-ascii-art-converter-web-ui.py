@@ -16,6 +16,7 @@ from ascii_magic import AsciiArt
 from ansitoimg.render import ansiToSVG
 from util import include_css, download_image, save_uploaded_file, replace_values_in_index_html
 import json
+import signal
 
 UPLOAD_DIRECTORY = config('UPLOAD_DIRECTORY')
 EXPORT_IMAGE_ENDING = "-ascii-art.png"
@@ -46,6 +47,11 @@ logging.basicConfig()
 logging.getLogger().setLevel(logging.INFO)
 
 conv = Ansi2HTMLConverter()
+
+# if the dry run is enabled, we will stop the script
+if config('DRY_RUN', default=False, cast=bool):
+    logging.info("dry run enabled, will stop script, now")
+    os.kill(os.getpid(), signal.SIGTERM)
 
 ascii_image_converter_with_colors = "With colors (I)"
 ascii_image_converter_with_colors_complex = "With colors (II)"

@@ -33,6 +33,9 @@ ENV COLORTERM=24bit
 # set environment variables for the application
 ENV UPLOAD_DIRECTORY=/app/working_directory
 
+# do a dry run to see if the applications would starts (so, we are not surprised if it doesn't work during the real start of the container)
+RUN (export DRY_RUN=True; export UPLOAD_DIRECTORY="/app/working_directory"; streamlit run image-to-ascii-art-converter-web-ui.py &) && sleep 5 && curl http://localhost:${SERVER_PORT}/
+
 EXPOSE $SERVER_PORT
 HEALTHCHECK CMD curl --fail http://localhost:$SERVER_PORT/_stcore/health
 
