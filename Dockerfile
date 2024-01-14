@@ -23,6 +23,7 @@ COPY . /app
 WORKDIR /app
 
 # install python dependencies
+RUN python3 --version
 RUN python3 -m pip install --upgrade pip 
 RUN python3 -m pip install -r requirements.txt
 
