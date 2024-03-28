@@ -17,7 +17,7 @@ jobs:
         uses: WSE-research/docker-service-updater@v0.2.1
         with:
           mode: register
-          updater_host: WSE-research/docker-service-updater@v0.2.1
+          updater_host: ${{ secrets.UPDATER_HOST }}
           api_key: ${{ secrets.API_KEY }}          
           config_file: "service_config/service_config.json"
           setup_path: "service_config"
