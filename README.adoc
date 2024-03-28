@@ -130,7 +130,6 @@ If you want to increase the upload larger, then change the `server.maxUploadSize
 server.maxUploadSize=5 
 ----
 
-
 ==== Run Docker Image
 
 [source, bash]
