@@ -34,7 +34,7 @@ jobs:
       run: docker push "wseresearch/${{ secrets.DOCKER_IMAGE_NAME }}:${{ github.ref_name }}"
     - name: Init update
       if: startsWith(github.ref, 'refs/tags/')
-      uses: WSE-research/docker-service-updater@v0.2.1
+      uses: ${{ secrets.DOCKER_SERVICE_UPDATER_WITH_VERSION }}
       with:
         updater_host: ${{ secrets.UPDATER_HOST }}
         api_key: ${{ secrets.API_KEY }}
