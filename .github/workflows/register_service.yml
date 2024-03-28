@@ -14,7 +14,7 @@ jobs:
 
       # init registration 
       - name: Init Registration
-        uses: wseresearch/${{ secrets.DOCKER_SERVICE_UPDATER_WITH_VERSION }}
+        uses: WSE-research/docker-service-updater@v0.2.1
         with:
           mode: register
           updater_host: ${{ secrets.UPDATER_HOST }}
