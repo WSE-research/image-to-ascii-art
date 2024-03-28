@@ -21,7 +21,7 @@ Do you want to create ASCII art from your images?
 Then this tool is for you.
 It is a web application that allows you to upload an image and convert it to ASCII art.
 Here, we did not implement yet another image-to-ASCII conversion algorithm. 
-Instead, we use existing implementations and provide a web interface for them, s.t., the configuration, and conversion can be done in the browser.
+Instead, we use existing implementations and provide a web interface for them, s.t., the configuration, and conversion can be done in the web browser.
 The application is based on https://github.com/TheZoraiz/ascii-image-converter[ascii-image-converter] (available as a console application) and https://github.com/LeandroBarone/python-ascii_magic[ASCII magic] (Python library), so thanks for image generation go to the authors of these projects.
 However, our tool provides additional features like SVG, PNG, and ASCII export as well as a preview mode and many more.
 Here, we focus on providing an easy-to-use web interface that makes it easy to convert images to ASCII art and compare different results.
@@ -44,7 +44,7 @@ toc::[]
 
 == Features
 
-* Upload an image *or* directly use an image from the web
+* Upload an image *or* directly use an image from the web (insert a URL)
 * Convert the image to ASCII art using 9 different algorithms/configurations (all of them are shown )
 ** 3 with colorized characters (2 from ascii-image-converter, 1 from ASCII magic)
 ** 3 with colorized character backgrounds (all from ascii-image-converter)
