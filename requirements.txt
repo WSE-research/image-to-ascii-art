@@ -2,7 +2,7 @@ ansi2html==1.9.2
 ansitoimg==2024.2
 ascii_magic==2.3.0
 lxml==5.3.0
-markdown==3.6
+markdown==3.7
 Pillow==10.4.0
 python-decouple==3.8
 Requests==2.32.3
