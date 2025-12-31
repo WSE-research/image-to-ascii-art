@@ -11,11 +11,12 @@ ifdef::env-github[]
 :github-repository: https://github.com/WSE-research/image-to-ascii-art
 endif::[]
 
+
+= Image To ASCII Converter
+
 ++++
 <img align="right" role="right" height="128" src="https://github.com/WSE-research/image-to-ascii-art/blob/main/images/image-to-ascii-art-logo.png?raw=true"/>
 ++++
-
-= Image To ASCII Converter
 
 Do you want to create ASCII art from your images? 
 Then this tool is for you.
