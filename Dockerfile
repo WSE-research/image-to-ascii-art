@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:26.04
 
 # parameters that might be provided at runtime by using the --env option
 ENV REPLACE_INDEX_HTML_CONTENT="false"
