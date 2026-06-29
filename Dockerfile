@@ -9,11 +9,14 @@ ENV ADDITIONAL_HTML_HEAD_CONTENT=""
 
 # install dependencies
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -yq bash curl wget ca-certificates python3 python3-pip 
+RUN apt-get update && apt-get install -yq bash curl wget ca-certificates python3 python3-venv
 
+# ascii-image-converter ships as a distro-independent binary via its own apt repo
 RUN echo 'deb [trusted=yes] https://apt.fury.io/ascii-image-converter/ /' | tee /etc/apt/sources.list.d/ascii-image-converter.list
-RUN echo 'deb [trusted=yes] http://ppa.launchpad.net/inkscape.dev/stable-1.1/ubuntu focal InRelease' | tee /etc/apt/sources.list.d/inkscape.list
-RUN apt-get update && apt-get install -yq inkscape ascii-image-converter 
+# inkscape is installed from the default Ubuntu repositories. The old
+# inkscape.dev "focal" PPA was broken (wrong component, missing public key) and
+# is unavailable on current Ubuntu releases.
+RUN apt-get update && apt-get install -yq inkscape ascii-image-converter
 
 # an acceptable version of inkscape would be >= 1.1
 RUN /usr/bin/inkscape -V
@@ -22,10 +25,16 @@ RUN /usr/bin/inkscape -V
 COPY . /app
 WORKDIR /app
 
-# install python dependencies
+# install python dependencies into an isolated virtualenv.
+# Ubuntu 24.04+ marks the system Python as externally managed (PEP 668), so
+# installing into the system interpreter is rejected; a venv avoids that and
+# keeps the app's dependencies isolated. Putting the venv on PATH makes
+# `python`/`pip`/`streamlit` resolve to it for the rest of the build and runtime.
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 RUN python3 --version
-RUN python3 -m pip install --upgrade pip 
-RUN python3 -m pip install -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
 # set environment variables for the required colorization of the terminal
 ENV force_color_prompt=yes
