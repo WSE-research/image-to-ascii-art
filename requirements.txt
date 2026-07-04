@@ -3,7 +3,7 @@ ansitoimg==2024.2
 ascii_magic==2.7.5
 lxml==6.1.1
 markdown==3.10.2
-Pillow==12.2.0
+Pillow==12.3.0
 python-decouple==3.8
 Requests==2.34.2
 streamlit==1.58.0
