@@ -1,4 +1,4 @@
-ansi2html==1.9.3
+ansi2html==1.9.5
 ansitoimg==2024.2
 ascii_magic==2.7.5
 lxml==6.1.3
